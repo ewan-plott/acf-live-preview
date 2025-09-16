@@ -1,0 +1,24 @@
+
+#acf_live_preview_meta:not(.closed) {
+    position: sticky;
+    top: 64px;                
+    max-height: calc(100vh - 96px);
+    overflow: auto;
+    z-index: 9999;
+}
+
+#acf-live-preview__content img,
+#acf-live-preview__content video,
+#acf-live-preview__content iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+#acf-live-preview__content .preview-block {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: #fff;
+}
