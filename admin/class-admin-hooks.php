@@ -28,26 +28,45 @@ class Admin_Hooks {
         </div>
     <?php }
 
-    public static function enqueue( string $hook ): void {
-    // Only on post editor screens
+public static function enqueue( string $hook ): void {
     if ( ! in_array( $hook, [ 'post.php', 'post-new.php' ], true ) ) return;
 
-    // Styles
+    // CSS
+    $css_rel = 'assets/css/admin-preview.css';
+    $css_abs = ACF_LIVE_PREVIEW_PATH . $css_rel;
+    $css_url = ACF_LIVE_PREVIEW_URL  . $css_rel;
+
     wp_enqueue_style(
         'acf-live-preview-admin',
-        ACF_LIVE_PREVIEW_URL . 'assets/css/admin-preview.css',
+        $css_url,                                   // ✅ URL
         [],
-        ACF_LIVE_PREVIEW_VERSION
+        file_exists($css_abs) ? filemtime($css_abs) : ACF_LIVE_PREVIEW_VERSION
     );
 
-    // Scripts
+    // JS: pick debug or prod
+    $js_rel = ( defined('ACF_LIVE_PREVIEW_DEBUG') && ACF_LIVE_PREVIEW_DEBUG )
+        ? 'assets/js/debug-admin-preview.js'
+        : 'assets/js/admin-preview.js';
+
+    $js_abs = ACF_LIVE_PREVIEW_PATH . $js_rel;
+    $js_url = ACF_LIVE_PREVIEW_URL  . $js_rel;
+
     wp_enqueue_script(
         'acf-live-preview-admin',
-        ACF_LIVE_PREVIEW_URL . 'assets/js/admin-preview.js',
+        $js_url,                                   // ✅ URL (NOT $js_abs)
         [],
-        ACF_LIVE_PREVIEW_VERSION,
+        file_exists($js_abs) ? filemtime($js_abs) : ACF_LIVE_PREVIEW_VERSION,
         true
     );
+
+    wp_localize_script( 'acf-live-preview-admin', 'ACF_LIVE_PREVIEW', [
+        'ajax_url' => admin_url('admin-ajax.php'),
+        'nonce'    => wp_create_nonce('acf_live_preview_nonce'),
+        'post_id'  => get_the_ID(),
+        'debug'    => defined('ACF_LIVE_PREVIEW_DEBUG') && ACF_LIVE_PREVIEW_DEBUG,
+    ] );
+}
+
 
     // Localize AJAX (AJAX endpoint, nonce, current post id, etc.)
     wp_localize_script( 'acf-live-preview-admin', 'ACF_LIVE_PREVIEW', [
