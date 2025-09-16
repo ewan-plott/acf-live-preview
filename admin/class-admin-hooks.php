@@ -28,7 +28,7 @@ class Admin_Hooks {
         </div>
     <?php }
 
-public static function enqueue( string $hook ): void {
+    public static function enqueue( string $hook ): void {
     if ( ! in_array( $hook, [ 'post.php', 'post-new.php' ], true ) ) return;
 
     // CSS
@@ -67,13 +67,3 @@ public static function enqueue( string $hook ): void {
     ] );
 }
 
-
-    // Localize AJAX (AJAX endpoint, nonce, current post id, etc.)
-    wp_localize_script( 'acf-live-preview-admin', 'ACF_LIVE_PREVIEW', [
-        'ajax_url' => admin_url( 'admin-ajax.php' ),
-        'nonce'    => wp_create_nonce( 'acf_live_preview_nonce' ),
-        'post_id'  => get_the_ID(),
-    ] );
-}
-
-}
