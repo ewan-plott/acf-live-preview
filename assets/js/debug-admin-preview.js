@@ -50,7 +50,6 @@
     // tiny visual to prove wiring works
     box.innerHTML = `
       <div style="font:12px/1.5 system-ui, sans-serif">
-        <div style="margin-bottom:.5rem"><strong>Live Preview (debug mode)</strong></div>
         <div>Flexible rows: <strong>${snap.length}</strong></div>
         <pre style="margin-top:.5rem; white-space:pre-wrap; word-break:break-word; background:#f6f8fa; padding:.5rem; border-radius:6px; border:1px solid #e2e8f0; max-height:240px; overflow:auto;">${JSON.stringify(snap, null, 2)}</pre>
       </div>

@@ -67,3 +67,4 @@ class Admin_Hooks {
     ] );
 }
 
+}
