@@ -11,6 +11,44 @@ A WordPress plugin that provides live previews of ACF Flexible Content layouts d
 - Debug mode for development
 - Security hardened AJAX endpoints
 
+ACF Fields Checklist:
+
+- [ ] Text
+- [ ] Text Area
+- [ ] Number
+- [ ] Range
+- [ ] Email
+- [ ] URL
+- [ ] Password
+- [ ] Image
+- [ ] File
+- [ ] WYSIWYG Editor
+- [ ] oEmbed
+- [ ] Gallery
+- [ ] Select
+- [ ] Checkbox
+- [ ] Radio Button
+- [ ] Button Group
+- [ ] True / False
+- [ ] Link
+- [ ] Post Object
+- [ ] Page Link
+- [ ] Relationship
+- [ ] Taxonomy
+- [ ] User
+- [ ] Google Map
+- [ ] Date Picker
+- [ ] Date Time Picker
+- [ ] Time Picker
+- [ ] Colour Picker
+- [ ] Icon Picker
+- [ ] Message
+- [ ] Tab
+- [ ] Group
+- [ ] Repeater
+- [ ] Flexible Content
+- [ ] Clone
+
 ## Requirements
 - WordPress 5.0+
 - Advanced Custom Fields (ACF) 5.8.0+
