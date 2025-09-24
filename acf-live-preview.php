@@ -2,7 +2,7 @@
 /*
 * Plugin Name:       ACF Flexible Content Live Preview
 * Description:       Provides real-time preview for ACF Flexible Content fields.
-* Version:           0.0.1
+* Version:           0.0.2
 * Author:            Ewan Lockwood
 * Author URI:        https://plott.co.uk
 * Text Domain:       acf-live-preview
@@ -13,12 +13,12 @@
     }
 
 // Constants
-define( 'ACF_LIVE_PREVIEW_VERSION', '0.0.1' );
+define( 'ACF_LIVE_PREVIEW_VERSION', '0.0.2' );
 define( 'ACF_LIVE_PREVIEW_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ACF_LIVE_PREVIEW_URL',  plugin_dir_url( __FILE__ ) );
 
 if ( ! defined( 'ACF_LIVE_PREVIEW_DEBUG' ) ) {
-    define( 'ACF_LIVE_PREVIEW_DEBUG', true );
+    define( 'ACF_LIVE_PREVIEW_DEBUG', false );
 }
 
 add_action( 'plugins_loaded', function () {
@@ -30,10 +30,19 @@ add_action( 'plugins_loaded', function () {
 
     // Require Classes
     require_once ACF_LIVE_PREVIEW_PATH . 'admin/class-admin-hooks.php';
-    // require_once ACF_LIVE_PREVIEW_PATH . 'admin/class-preview-ajax.php';
+    require_once ACF_LIVE_PREVIEW_PATH . 'admin/class-preview-ajax.php';
+    require_once ACF_LIVE_PREVIEW_PATH . 'admin/class-settings.php';
 
     // Boot classes 
-    if ( class_exists( '\\ACFLivePreview\\Admin_Hooks' ) ) {
-        \ACFLivePreview\Admin_Hooks::boot();
+    if ( class_exists( '\\ACFLivePreview\\AdminHooks' ) ) {
+        \ACFLivePreview\AdminHooks::boot();
+    }
+
+    if ( class_exists( '\\ACFLivePreview\\PreviewAjax' ) ) {
+        \ACFLivePreview\PreviewAjax::boot();
+    }
+
+    if ( class_exists( '\\ACFLivePreview\\Settings' ) ) {
+        \ACFLivePreview\Settings::boot();
     }
 } );
