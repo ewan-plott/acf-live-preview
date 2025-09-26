@@ -3,15 +3,24 @@ namespace ACFLivePreview;
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+/**
+ * Settings page for ACF Live Preview plugin
+ */
 class Settings {
     public const PAGE       = 'acf-live-preview';
     public const OPTION_KEY = 'acf_live_preview_options';
 
+    /**
+     * Initialize settings page hooks
+     */
     public static function boot(): void {
         add_action('admin_menu',  [__CLASS__, 'menu']);
         add_action('admin_init',  [__CLASS__, 'register']);
     }
 
+    /**
+     * Register the options page in the WP admin menu
+     */
     public static function menu(): void {
         add_options_page(
             __('ACF Live Preview', 'acf-live-preview'),
@@ -22,7 +31,11 @@ class Settings {
         );
     }
 
+    /**
+     * Register settings, sections, and fields
+     */
     public static function register(): void {
+        // Register the main setting with defaults
         register_setting(self::PAGE, self::OPTION_KEY, [
             'type'              => 'array',
             'sanitize_callback' => [__CLASS__, 'sanitize'],
@@ -33,6 +46,7 @@ class Settings {
             ],
         ]);
 
+        // Assets section
         add_settings_section('assets', __('Global Theme Assets', 'acf-live-preview'), '__return_false', self::PAGE);
 
         add_settings_field('css_url', __('CSS bundle URL', 'acf-live-preview'), [__CLASS__, 'field_text'], self::PAGE, 'assets', [
@@ -47,6 +61,7 @@ class Settings {
             'desc' => __('Absolute URL or theme-relative path. Leave empty if not needed.', 'acf-live-preview'),
         ]);
 
+        // Templates section
         add_settings_section('templates', __('Template Search Paths', 'acf-live-preview'), '__return_false', self::PAGE);
         
         add_settings_field('template_paths', __('Template hierarchy', 'acf-live-preview'), [__CLASS__, 'field_textarea'], self::PAGE, 'templates', [
@@ -56,6 +71,9 @@ class Settings {
         ]);
     }
 
+    /**
+     * Sanitize settings input
+     */
     public static function sanitize($input): array {
         $out = [];
         $out['css_url'] = isset($input['css_url']) ? esc_url_raw(trim($input['css_url'])) : '';
@@ -64,6 +82,9 @@ class Settings {
         return $out;
     }
 
+    /**
+     * Render text input field
+     */
     public static function field_text(array $args): void {
         $opts = get_option(self::OPTION_KEY, []);
         $key  = $args['key'];
@@ -74,6 +95,9 @@ class Settings {
         if ($desc) echo '<p class="description">'.$desc.'</p>';
     }
 
+    /**
+     * Render textarea input field
+     */
     public static function field_textarea(array $args): void {
         $opts = get_option(self::OPTION_KEY, []);
         $key  = $args['key'];
@@ -84,6 +108,9 @@ class Settings {
         if ($desc) echo '<p class="description">'.$desc.'</p>';
     }
 
+    /**
+     * Render the settings page
+     */
     public static function render(): void {
         echo '<div class="wrap"><h1>'.esc_html__('ACF Live Preview', 'acf-live-preview').'</h1>';
         echo '<form method="post" action="options.php">';
