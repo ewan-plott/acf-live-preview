@@ -44,8 +44,41 @@ export function collectRowData(row) {
         val = Array.from(wrap.querySelectorAll('input[type="hidden"][name^="acf["]'))
           .map(i => parseInt(i.value, 10)).filter(Boolean);
       }
-    } else if (ftype === 'repeater') {  
+    } else if (ftype === 'repeater') {
+      const repeaterRows = [];
+      const repeaterTable = wrap.querySelector('.acf-table');
+      if (repeaterTable) {
+        const rows = repeaterTable.querySelectorAll('.acf-row:not(.acf-clone)');
+        console.log(`[ACF LP] Found ${rows.length} repeater rows for field "${name}"`);
+        
+        rows.forEach((repeaterRow, idx) => {
+          const rowData = {};
+          repeaterRow.querySelectorAll('.acf-field').forEach((field) => {
+            const fieldName = field.getAttribute('data-name') || field.dataset.name || '';
+            const fieldType = field.getAttribute('data-type') || field.dataset.type || '';
+            const fieldCtrl = field.querySelector('input, textarea, select');
+            
+            if (fieldName && fieldCtrl) {
+              let fieldVal = fieldCtrl.value ?? '';
+              
+              // Handle special field types within repeater
+              if (fieldType === 'image' || fieldType === 'file') {
+                fieldVal = parseInt(fieldCtrl.value, 10) || null;
+              }
+              
+              rowData[fieldName] = fieldVal;
+              console.log(`[ACF LP] Repeater row ${idx}, field "${fieldName}":`, fieldVal);
+            }
+          });
+          
+          if (Object.keys(rowData).length > 0) {
+            repeaterRows.push(rowData);
+          }
+        });
+      }
       
+      val = JSON.stringify(repeaterRows);
+      console.log(`[ACF LP] Repeater "${name}" final value:`, val);
     } else if (ctrl.type === 'checkbox') {
       val = Array.from(wrap.querySelectorAll('input[type="checkbox"]:checked')).map(i => i.value);
     } else if (ctrl.type === 'radio') {

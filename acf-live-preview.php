@@ -18,7 +18,7 @@ define( 'ACF_LIVE_PREVIEW_PATH', plugin_dir_path( __FILE__ ) );
 define( 'ACF_LIVE_PREVIEW_URL',  plugin_dir_url( __FILE__ ) );
 
 if ( ! defined( 'ACF_LIVE_PREVIEW_DEBUG' ) ) {
-    define( 'ACF_LIVE_PREVIEW_DEBUG', false );
+    define( 'ACF_LIVE_PREVIEW_DEBUG', true );
 }
 
 add_action( 'plugins_loaded', function () {

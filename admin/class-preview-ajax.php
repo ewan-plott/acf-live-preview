@@ -26,6 +26,10 @@ public static function handle(): void {
 
     $debug   = ( isset($_POST['_acflp_debug']) && (string)$_POST['_acflp_debug'] === '1' )
             || ( defined('ACF_LIVE_PREVIEW_DEBUG') && ACF_LIVE_PREVIEW_DEBUG );
+    
+    if ( $debug ) {
+        error_log('[ACF LP] Raw rows data: ' . print_r($rows, true));
+    }
 
     $post_id = isset($_POST['post_id']) ? absint($_POST['post_id']) : 0;
     
@@ -55,6 +59,11 @@ public static function handle(): void {
         // Transform raw field data into template-ready formats (images, galleries, etc.)
         foreach ( $fields as $k => $v ) {
             $field_type = $types[$k] ?? self::guess_type_from_value($v);
+            
+            if ( $debug && $field_type === 'repeater' ) {
+                error_log('[ACF LP] Field "' . $k . '" - Type: ' . $field_type . ' - Raw value: "' . print_r($v, true) . '" - Value length: ' . (is_string($v) ? strlen($v) : 'N/A'));
+            }
+            
             $fields[$k] = self::format_field_value($field_type, $v);
         }
 
@@ -210,6 +219,51 @@ private static function format_field_value( string $type, $value ) {
                 }
             }
             return $out;
+
+        case 'repeater':
+            if ( defined('ACF_LIVE_PREVIEW_DEBUG') && ACF_LIVE_PREVIEW_DEBUG ) {
+                error_log('[ACF LP] Repeater field value (raw): ' . print_r($value, true));
+                error_log('[ACF LP] Repeater field type: ' . gettype($value));
+            }
+            
+            // If value is a JSON string, decode it
+            if (is_string($value)) {
+                $decoded = json_decode($value, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    if ( defined('ACF_LIVE_PREVIEW_DEBUG') && ACF_LIVE_PREVIEW_DEBUG ) {
+                        error_log('[ACF LP] Repeater decoded successfully. Row count: ' . count($decoded));
+                    }
+                    
+                    // Format nested field values (images, etc.)
+                    foreach ($decoded as $rowIdx => $row) {
+                        if (is_array($row)) {
+                            foreach ($row as $fieldKey => $fieldVal) {
+                                // Detect if value is an image/file ID
+                                $nestedType = self::guess_type_from_value($fieldVal);
+                                $decoded[$rowIdx][$fieldKey] = self::format_field_value($nestedType, $fieldVal);
+                                
+                                if ( defined('ACF_LIVE_PREVIEW_DEBUG') && ACF_LIVE_PREVIEW_DEBUG ) {
+                                    error_log('[ACF LP] Repeater row ' . $rowIdx . ', field "' . $fieldKey . '": type=' . $nestedType . ', formatted=' . print_r($decoded[$rowIdx][$fieldKey], true));
+                                }
+                            }
+                        }
+                    }
+                    
+                    return $decoded;
+                }
+            }
+            
+            // Already an array
+            if (is_array($value)) {
+                if ( defined('ACF_LIVE_PREVIEW_DEBUG') && ACF_LIVE_PREVIEW_DEBUG ) {
+                    error_log('[ACF LP] Repeater row count: ' . count($value));
+                }
+                return $value;
+            }
+            
+            // Fallback to empty array
+            return [];
+
 
         // Add more cases if you need (relationship, post_object, taxonomy etc.)
 
