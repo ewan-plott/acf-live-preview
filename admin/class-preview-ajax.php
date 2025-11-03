@@ -150,38 +150,12 @@ public static function handle(): void {
  * Expand raw editor values into template-ready arrays for special types.
  */
 private static function format_field_value( string $type, $value ) {
+    error_log($type);
     switch ($type) {
         case 'image':
+            // Return just the ID to match ACF's default behavior
             $id = is_numeric($value) ? (int)$value : 0;
-            if ( ! $id ) return null;
-
-            try {
-                // Prefer ACF's attachment helper if available
-                if ( function_exists('acf_get_attachment') ) {
-                    $arr = acf_get_attachment($id);
-                    if ( is_array($arr) && !empty($arr['url']) ) {
-                        return $arr;
-                    }
-                }
-
-                // Fallback to WordPress core functions
-                $url = wp_get_attachment_url($id);
-                if ( ! $url ) return null;
-
-                $alt = get_post_meta($id, '_wp_attachment_image_alt', true);
-                return [
-                    'id'    => $id,
-                    'url'   => $url,
-                    'alt'   => $alt ?: '',
-                    'title' => get_the_title($id),
-                ];
-            } catch ( \Throwable $e ) {
-                // Log errors only in debug mode
-                if ( defined('ACF_LIVE_PREVIEW_DEBUG') && ACF_LIVE_PREVIEW_DEBUG ) {
-                    error_log('[ACF LP] Image processing failed for ID ' . $id . ': ' . $e->getMessage());
-                }
-                return null;
-            }
+            return $id ?: null;
 
         case 'file':
             $id = is_numeric($value) ? (int)$value : 0;

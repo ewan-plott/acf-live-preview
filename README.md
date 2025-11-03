@@ -92,11 +92,11 @@ ACF Fields Checklist:
 - [ ] Email
 - [ ] URL
 - [ ] Password
-- [ ] Image
-- [ ] File
+- [x] Image
+- [x] File
 - [ ] WYSIWYG Editor
 - [ ] oEmbed
-- [ ] Gallery
+- [x] Gallery
 - [ ] Select
 - [ ] Checkbox
 - [ ] Radio Button
@@ -117,7 +117,7 @@ ACF Fields Checklist:
 - [ ] Message
 - [ ] Tab
 - [ ] Group
-- [ ] Repeater
+- [x] Repeater
 - [ ] Flexible Content
 - [ ] Clone
 
